@@ -1,147 +1,312 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowDown, Download, Mail, Eye } from "lucide-react";
+import {
+  Play,
+  Pause,
+  Check,
+  UserPlus,
+  MoreHorizontal,
+  Download,
+  Mail,
+  Sparkles,
+  Flame,
+  Clock,
+} from "lucide-react";
 import { portfolioData } from "@/data/portfolio";
+import { useAudioPlayer } from "@/hooks/useAudioPlayer";
+import { audioEngine } from "@/utils/audioEngine";
 
 export default function HeroSection() {
-  const { name, role, introduction } = portfolioData;
+  const { name, role, introduction, projects } = portfolioData;
+  const { isPlaying, togglePlay, playTrack, currentTrack } = useAudioPlayer();
+  const [following, setFollowing] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+
+  const handleFollow = () => {
+    setFollowing(!following);
+    if (!following) {
+      audioEngine.playSuccess();
+    } else {
+      audioEngine.playClick();
+    }
+  };
+
+  // Top 5 Popular "Tracks" (Flagship projects/skills)
+  const popularTracks = projects.slice(0, 5).map((p, idx) => ({
+    id: `project-${p.id}`,
+    title: p.title,
+    artist: name,
+    album: p.category,
+    duration: 180 + p.id * 15,
+    plays: (980420 - idx * 123450).toLocaleString(),
+    category: p.category,
+    technologies: p.technologies,
+    github: p.github,
+    live: p.live,
+    description: p.description,
+  }));
 
   return (
-    <section
-      id="home"
-      className="relative min-h-screen flex items-center justify-center px-4 pt-16 pb-8 overflow-hidden"
-    >
-      <div className="relative z-10 max-w-4xl mx-auto w-full text-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="mb-8 inline-block"
-        >
-          <div
-            className="relative w-36 h-36 sm:w-44 sm:h-44 mx-auto rounded-full overflow-hidden border-4"
-            style={{ borderColor: "var(--accent)" }}
-          >
-            <div
-              className="w-full h-full flex items-center justify-center text-5xl font-bold select-none"
-              style={{
-                background: `linear-gradient(135deg, var(--accent), #1ed760)`,
-                color: "white",
-              }}
-            >
-              {name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
-            </div>
-            <div
-              className="absolute -bottom-1 -right-1 w-10 h-10 rounded-full flex items-center justify-center border-2"
-              style={{
-                backgroundColor: "var(--accent)",
-                borderColor: "var(--bg-primary)",
-              }}
-            >
-              <span className="animate-pulse-ring absolute inset-0 rounded-full" style={{ borderColor: "var(--accent)" }} />
-              <span className="text-white text-lg">✓</span>
-            </div>
-          </div>
-        </motion.div>
+    <section id="home" className="relative pb-12 overflow-hidden">
+      {/* Spotify Artist Panoramic Banner */}
+      <div
+        className="relative pt-20 pb-12 px-4 sm:px-8 md:px-12 flex flex-col justify-end min-h-[380px] sm:min-h-[460px] overflow-hidden transition-colors"
+        style={{
+          background: "linear-gradient(180deg, rgba(29,185,84,0.35) 0%, rgba(18,18,18,0.85) 75%, var(--bg-primary) 100%)",
+        }}
+      >
+        {/* Animated ambient glow blobs */}
+        <div
+          className="absolute -top-20 -left-20 w-96 h-96 rounded-full blur-3xl opacity-30 pointer-events-none animate-pulse-ring"
+          style={{ backgroundColor: "var(--accent)" }}
+        />
+        <div
+          className="absolute top-10 right-10 w-80 h-80 rounded-full blur-3xl opacity-20 pointer-events-none"
+          style={{ backgroundColor: "#8b5cf6" }}
+        />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <p
-            className="text-xs sm:text-sm font-medium mb-2 tracking-widest uppercase"
-            style={{ color: "var(--accent)" }}
+        <div className="relative z-10 max-w-6xl mx-auto w-full">
+          {/* Verified Artist Pill */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="flex items-center gap-2 mb-3"
           >
-            Portfolio
-          </p>
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-4 leading-tight">
-            Hi, I&apos;m{" "}
-            <span
-              className="inline-block"
-              style={{ color: "var(--accent)" }}
-            >
-              {name}
+            <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center shadow-md">
+              <Check className="w-3 h-3 text-white stroke-[3]" />
+            </div>
+            <span className="text-xs sm:text-sm font-semibold tracking-wide text-white drop-shadow">
+              Verified Developer
             </span>
-          </h1>
-          <p
-            className="text-lg sm:text-xl md:text-2xl font-medium mb-4"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            {role}
-          </p>
-          <p
-            className="text-sm sm:text-base max-w-xl mx-auto mb-8 leading-relaxed"
-            style={{ color: "var(--text-subtext)" }}
-          >
-            {introduction}
-          </p>
-        </motion.div>
+            <span className="hidden sm:inline-block text-white/50 text-xs">•</span>
+            <span className="hidden sm:inline-flex items-center gap-1 text-xs text-white/80">
+              <Flame className="w-3.5 h-3.5 text-orange-400" />
+              1,420,892 Monthly Listeners
+            </span>
+          </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-wrap items-center justify-center gap-3"
-        >
-          <a
-            href="#projects"
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-200 hover:scale-105"
-            style={{
-              backgroundColor: "var(--accent)",
-              color: "#ffffff",
-            }}
+          {/* Artist Name & Title */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <Eye className="w-4 h-4" />
-            View Projects
-          </a>
-          <a
-            href="#contact"
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-200 hover:scale-105 border"
-            style={{
-              borderColor: "var(--text-secondary)",
-              color: "var(--text-primary)",
-            }}
+            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tight drop-shadow-md mb-2">
+              {name}
+            </h1>
+            <p className="text-lg sm:text-2xl font-bold text-white/90 drop-shadow mb-4">
+              {role}
+            </p>
+            <p className="text-sm sm:text-base text-white/75 max-w-2xl leading-relaxed mb-6">
+              {introduction}
+            </p>
+          </motion.div>
+
+          {/* Action Row: Giant Play Button, Follow & Options */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-wrap items-center gap-3 sm:gap-4"
           >
-            <Mail className="w-4 h-4" />
-            Contact Me
-          </a>
-          <a
-            href="/resume.pdf"
-            download
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-200 hover:scale-105"
-            style={{
-              backgroundColor: "transparent",
-              color: "var(--accent)",
-              border: "1px solid var(--accent)",
-            }}
-          >
-            <Download className="w-4 h-4" />
-            Download Resume
-          </a>
-        </motion.div>
+            {/* Giant Green Play Button */}
+            <motion.button
+              onClick={togglePlay}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center shadow-2xl relative group"
+              style={{ backgroundColor: "var(--accent)" }}
+              aria-label={isPlaying ? "Pause Portfolio" : "Play Portfolio"}
+            >
+              <div
+                className="absolute inset-0 rounded-full animate-ping opacity-40 group-hover:opacity-60"
+                style={{ backgroundColor: "var(--accent)" }}
+              />
+              {isPlaying ? (
+                <Pause className="w-6 h-6 sm:w-7 sm:h-7 text-white fill-current relative z-10" />
+              ) : (
+                <Play className="w-6 h-6 sm:w-7 sm:h-7 text-white fill-current ml-1 relative z-10" />
+              )}
+            </motion.button>
+
+            {/* Follow Button */}
+            <button
+              onClick={handleFollow}
+              className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wider uppercase border transition-all duration-200 flex items-center gap-2 ${
+                following
+                  ? "bg-white text-black border-white"
+                  : "bg-transparent text-white border-white/40 hover:border-white hover:scale-105"
+              }`}
+            >
+              {following ? (
+                <>
+                  <Check className="w-4 h-4" /> Following
+                </>
+              ) : (
+                <>
+                  <UserPlus className="w-4 h-4" /> Follow
+                </>
+              )}
+            </button>
+
+            {/* Contact / Hire */}
+            <a
+              href="#contact"
+              className="px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold border border-white/40 text-white hover:border-white transition-all hover:scale-105 flex items-center gap-2"
+            >
+              <Mail className="w-4 h-4" /> Contact
+            </a>
+
+            {/* Resume Download */}
+            <a
+              href={portfolioData.resumeUrl}
+              download
+              className="px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold border border-white/40 text-white hover:border-white transition-all hover:scale-105 flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" /> Resume
+            </a>
+
+            {/* Three Dots More Menu */}
+            <div className="relative">
+              <button
+                onClick={() => setShowMore(!showMore)}
+                className="w-10 h-10 rounded-full flex items-center justify-center text-white/70 hover:text-white transition-colors"
+                aria-label="More options"
+              >
+                <MoreHorizontal className="w-6 h-6" />
+              </button>
+
+              {showMore && (
+                <div
+                  className="absolute left-0 bottom-12 rounded-lg p-2 shadow-2xl border z-30 w-44 space-y-1"
+                  style={{
+                    backgroundColor: "var(--bg-card)",
+                    borderColor: "var(--border-color)",
+                  }}
+                >
+                  <a
+                    href={portfolioData.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block px-3 py-1.5 text-xs font-medium rounded hover:bg-white/10 transition-colors"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    GitHub Profile
+                  </a>
+                  <a
+                    href={portfolioData.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block px-3 py-1.5 text-xs font-medium rounded hover:bg-white/10 transition-colors"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    LinkedIn Profile
+                  </a>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
+      {/* Spotify "Popular Tracks" Section */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 mt-6">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
+          <Sparkles className="w-5 h-5 text-[#1db954]" />
+          Popular Releases
+        </h2>
+
+        <div
+          className="rounded-xl border overflow-hidden"
+          style={{
+            backgroundColor: "var(--bg-card)",
+            borderColor: "var(--border-color)",
+          }}
         >
-          <ArrowDown
-            className="w-5 h-5"
-            style={{ color: "var(--text-subtext)" }}
-          />
-        </motion.div>
-      </motion.div>
+          {popularTracks.map((track, i) => {
+            const isThisTrack = currentTrack.id === track.id && isPlaying;
+            return (
+              <motion.div
+                key={track.id}
+                whileHover={{ backgroundColor: "var(--bg-hover)" }}
+                className="group flex items-center justify-between px-4 py-3 cursor-pointer border-b last:border-b-0 transition-colors"
+                style={{ borderColor: "var(--border-color)" }}
+                onClick={() => playTrack(track)}
+              >
+                {/* Index / Play Button */}
+                <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                  <div className="w-6 text-center text-sm font-bold text-white/50 group-hover:text-transparent relative shrink-0">
+                    <span className="group-hover:hidden">{i + 1}</span>
+                    <button
+                      className="absolute inset-0 hidden group-hover:flex items-center justify-center"
+                      aria-label="Play track"
+                    >
+                      <Play className="w-4 h-4 text-white fill-current" />
+                    </button>
+                  </div>
+
+                  {/* Artwork / Icon */}
+                  <div
+                    className="w-10 h-10 rounded flex items-center justify-center font-bold text-sm text-white shrink-0 shadow"
+                    style={{
+                      background: `linear-gradient(135deg, ${getColor(i)}, ${getColor(i + 1)})`,
+                    }}
+                  >
+                    {track.title[0]}
+                  </div>
+
+                  {/* Track Info */}
+                  <div className="min-w-0 flex-1">
+                    <p
+                      className="text-sm font-bold truncate flex items-center gap-2"
+                      style={{
+                        color: isThisTrack ? "var(--accent)" : "var(--text-primary)",
+                      }}
+                    >
+                      {track.title}
+                      {isThisTrack && (
+                        <span className="flex items-end gap-0.5 h-3 w-3">
+                          <span className="w-0.5 bg-[#1db954] h-full animate-bounce" />
+                          <span className="w-0.5 bg-[#1db954] h-2/3 animate-bounce delay-75" />
+                          <span className="w-0.5 bg-[#1db954] h-4/5 animate-bounce delay-150" />
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-xs truncate" style={{ color: "var(--text-subtext)" }}>
+                      {track.technologies.slice(0, 3).join(" • ")}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Plays count & duration */}
+                <div className="hidden sm:flex items-center gap-8 text-xs font-mono" style={{ color: "var(--text-secondary)" }}>
+                  <span>{track.plays} streams</span>
+                  <div className="flex items-center gap-1 w-12 justify-end">
+                    <Clock className="w-3 h-3" />
+                    <span>3:{15 + i * 12}</span>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
     </section>
   );
+}
+
+function getColor(index: number): string {
+  const colors = [
+    "#1db954",
+    "#1ed760",
+    "#2e77d0",
+    "#e91429",
+    "#f59b23",
+    "#af2896",
+    "#8b5cf6",
+  ];
+  return colors[index % colors.length];
 }

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import { portfolioData } from "@/data/portfolio";
+import { audioEngine } from "@/utils/audioEngine";
 
 interface FormData {
   name: string;
@@ -51,6 +52,7 @@ export default function ContactSection() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
+      audioEngine.playSuccess();
       setSubmitted(true);
       setForm({ name: "", email: "", message: "" });
       setTimeout(() => setSubmitted(false), 3000);

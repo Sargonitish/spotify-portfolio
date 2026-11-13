@@ -1,12 +1,37 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Play, BookOpen, Heart, Target, GraduationCap } from "lucide-react";
+import { Play, Pause, BookOpen, Heart, Target, GraduationCap } from "lucide-react";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import { portfolioData } from "@/data/portfolio";
+import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 
 export default function AboutSection() {
-  const { bio, education, interests, careerGoals } = portfolioData;
+  const { name, role, bio, education, interests, careerGoals } = portfolioData;
+  const { playTrack, togglePlay, currentTrack, isPlaying } = useAudioPlayer();
+
+  const isCurrent = currentTrack.id === "about-me" && isPlaying;
+
+  const handlePlayAbout = () => {
+    if (isCurrent) {
+      togglePlay();
+    } else {
+      playTrack({
+        id: "about-me",
+        title: `${name} - Behind The Code`,
+        artist: name,
+        album: "Origins & Aspirations",
+        duration: 240,
+        category: "Biography",
+        description: bio,
+      });
+    }
+  };
+
+  const initials = name
+    .split(" ")
+    .map((n) => n[0])
+    .join("");
 
   return (
     <section id="about" className="px-4 py-16 md:py-24">
@@ -36,32 +61,37 @@ export default function AboutSection() {
                 {/* Album art */}
                 <div className="shrink-0">
                   <div
-                    className="relative w-full max-w-[200px] aspect-square rounded-md overflow-hidden group"
+                    onClick={handlePlayAbout}
+                    className="relative w-full max-w-[200px] aspect-square rounded-md overflow-hidden group cursor-pointer shadow-lg"
                     style={{
                       background: `linear-gradient(135deg, var(--accent), #1ed760)`,
                     }}
                   >
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-6xl font-bold text-white/20 select-none">
-                        JD
+                      <span className="text-6xl font-black text-white/20 select-none">
+                        {initials}
                       </span>
                     </div>
-                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                       <motion.div
                         initial={{ scale: 0.8 }}
                         whileHover={{ scale: 1.1 }}
                         className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
                         style={{ backgroundColor: "var(--accent)" }}
                       >
-                        <Play className="w-6 h-6 text-white ml-0.5" />
+                        {isCurrent ? (
+                          <Pause className="w-6 h-6 text-white fill-current" />
+                        ) : (
+                          <Play className="w-6 h-6 text-white fill-current ml-0.5" />
+                        )}
                       </motion.div>
                     </div>
                     <div className="absolute bottom-2 left-2 right-2">
                       <p className="text-white text-xs font-bold drop-shadow-lg">
-                        John Doe
+                        {name}
                       </p>
-                      <p className="text-white/70 text-[10px] drop-shadow-lg">
-                        Full Stack Developer
+                      <p className="text-white/70 text-[10px] drop-shadow-lg truncate">
+                        {role}
                       </p>
                     </div>
                   </div>

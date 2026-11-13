@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Play, ExternalLink, Calendar } from "lucide-react";
+import { Play, Pause, ExternalLink, Calendar } from "lucide-react";
 import type { Certification } from "@/types";
+import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 
 interface CertificationCardProps {
   certification: Certification;
@@ -13,13 +14,38 @@ export default function CertificationCard({
   certification,
   index,
 }: CertificationCardProps) {
+  const { playTrack, togglePlay, currentTrack, isPlaying } = useAudioPlayer();
+
+  const isCurrent = currentTrack.id === `cert-${certification.id}` && isPlaying;
+
+  const handlePlayCert = () => {
+    if (isCurrent) {
+      togglePlay();
+    } else {
+      playTrack({
+        id: `cert-${certification.id}`,
+        title: certification.title,
+        artist: certification.organization,
+        album: "Certified Credentials",
+        duration: 180,
+        category: "Certificate",
+        live: certification.credentialUrl,
+        description: `Verified credential issued by ${certification.organization} in ${certification.date}.`,
+      });
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
-      className="group relative rounded-md overflow-hidden cursor-pointer"
-      style={{ backgroundColor: "var(--bg-card)" }}
+      onClick={handlePlayCert}
+      className="group relative rounded-xl overflow-hidden cursor-pointer border shadow-sm transition-all duration-300 hover:shadow-xl hover:border-neutral-600"
+      style={{
+        backgroundColor: "var(--bg-card)",
+        borderColor: "var(--border-color)",
+      }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
     >
       <div className="relative aspect-square overflow-hidden">
@@ -31,7 +57,7 @@ export default function CertificationCard({
             )}, ${getColor(index + 2)})`,
           }}
         >
-          <span className="text-5xl font-bold opacity-15 select-none">
+          <span className="text-5xl font-black opacity-20 select-none">
             {certification.title.charAt(0)}
           </span>
         </div>
@@ -39,10 +65,14 @@ export default function CertificationCard({
           <motion.div
             initial={{ scale: 0.8 }}
             whileHover={{ scale: 1.1 }}
-            className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
+            className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
             style={{ backgroundColor: "var(--accent)" }}
           >
-            <Play className="w-6 h-6 text-white ml-0.5" />
+            {isCurrent ? (
+              <Pause className="w-5 h-5 text-white fill-current" />
+            ) : (
+              <Play className="w-5 h-5 text-white fill-current ml-0.5" />
+            )}
           </motion.div>
         </div>
       </div>

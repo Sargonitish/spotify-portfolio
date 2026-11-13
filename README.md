@@ -13,10 +13,16 @@ An interactive, modern developer portfolio crafted in the style of the **Spotify
 
 ## 🌟 Highlights & Features
 
-### 🎧 Authentic Spotify Web Player UI
-- **Fixed Spotify Sidebar:** Classic navigation layout with quick jump links (`#home`, `#about`, `#skills`, `#projects`, `#experience`, `#certifications`, `#contact`), custom playlists section, and theme switcher.
-- **Persistent "Now Playing" Bottom Bar:** Replicates the Spotify media player at the bottom of the screen featuring animated audio progress, like button, media controls, and volume slider.
-- **Album-Style Project Showcase:** Projects presented as Spotify albums with cover artwork, gradient backdrops, and hovering green play buttons (`#1DB954`).
+### 🎧 Authentic Spotify Web Player UI & Interactive Features
+- **Dynamic Artist Panoramic Header:** Spotify Verified Artist badge, 1.4M+ monthly listeners counter, giant pulsing green Play button, interactive Follow button, and a **"Popular Releases" Top 5 Tracks** chart.
+- **Interactive Web Audio Synthesizer:** Real-time lo-fi ambient audio player generated directly in the browser via the native Web Audio API (zero external audio files). Features volume slider, mute toggle, and UI micro-chimes.
+- **Persistent "Now Playing" Bottom Bar:** Fully functional Spotify media player with scrubber seek bar, live jumping green audio equalizer bars, track metadata, shuffle, repeat, and interactive Heart/Like saving.
+- **3D Tilt & Vinyl Record Animation:** Project album cards dynamically tilt with 3D mouse perspective while grooved vinyl records slide out and spin on hover!
+- **Interactive Lyrics & Architecture Drawer:** Click the Lyrics button in the player bar to open a Spotify Lyrics slide-over showcasing the project's code story and stack chords.
+- **Portfolio Wrapped 2026:** An animated, full-screen story mode celebrating the developer's top skills, albums shipped, and coding persona with confetti and sharing.
+- **Discography View Modes:** Switch between Spotify Album Grid View and Compact Tracklist View with active genre pills.
+- **Spotify Top Bar & Live Search:** Glassmorphic header with browser history buttons, instant search dropdown for skills & projects, and profile badge.
+- **Fixed Spotify Sidebar & Library:** Collapsible library tabs for Liked Projects, Verified Credentials, and Work Discography.
 
 ### ✨ Interactive Polish & Animations
 - **Custom Dynamic Cursor:** Fluid custom cursor that magnetically scales and transitions when hovering over interactive elements (links, buttons, cards). Fully SSR-safe with zero hydration mismatch.

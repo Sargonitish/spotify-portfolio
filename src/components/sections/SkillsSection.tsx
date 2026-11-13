@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { BarChart3, TrendingUp } from "lucide-react";
+import { TrendingUp, BarChart3, Clock, Sparkles } from "lucide-react";
 import AnimatedSection from "@/components/shared/AnimatedSection";
 import SkillRow from "@/components/shared/SkillRow";
 import SearchBar from "@/components/ui/SearchBar";
@@ -10,14 +9,23 @@ import { portfolioData } from "@/data/portfolio";
 
 export default function SkillsSection() {
   const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState<"rank" | "proficiency">("proficiency");
 
+  const categories = [
+    "All",
+    ...Array.from(new Set(portfolioData.skills.map((s) => s.category))),
+  ];
+
   const filtered = portfolioData.skills
-    .filter(
-      (s) =>
+    .filter((s) => {
+      const matchesSearch =
         s.name.toLowerCase().includes(search.toLowerCase()) ||
-        s.category.toLowerCase().includes(search.toLowerCase())
-    )
+        s.category.toLowerCase().includes(search.toLowerCase());
+      const matchesCategory =
+        selectedCategory === "All" || s.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    })
     .sort((a, b) =>
       sortBy === "proficiency"
         ? b.proficiency - a.proficiency
@@ -25,93 +33,113 @@ export default function SkillsSection() {
     );
 
   return (
-    <section id="skills" className="px-4 py-16 md:py-24">
+    <section id="skills" className="px-4 sm:px-8 py-16 md:py-24">
       <AnimatedSection>
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-8 flex items-center gap-3">
-            <span
-              className="w-1.5 h-6 rounded-full inline-block"
-              style={{ backgroundColor: "var(--accent)" }}
-            />
-            <span style={{ color: "var(--text-primary)" }}>Top Skills</span>
-            <span
-              className="text-xs font-medium px-2 py-0.5 rounded-full"
-              style={{
-                backgroundColor: "var(--accent)",
-                color: "#fff",
-              }}
-            >
-              This Month
-            </span>
-          </h2>
+        <div className="max-w-5xl mx-auto">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+            <div>
+              <h2 className="text-2xl sm:text-4xl font-black flex items-center gap-3">
+                <span
+                  className="w-2 h-8 rounded-full inline-block"
+                  style={{ backgroundColor: "var(--accent)" }}
+                />
+                <span style={{ color: "var(--text-primary)" }}>Technical Repertoire</span>
+                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#1db954] text-white">
+                  Top Charts
+                </span>
+              </h2>
+              <p className="text-xs sm:text-sm mt-1" style={{ color: "var(--text-subtext)" }}>
+                Ranked by production mastery & hands-on development time
+              </p>
+            </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 mb-6 items-start sm:items-center justify-between">
-            <SearchBar onSearch={setSearch} placeholder="Search skills..." />
-            <button
-              onClick={() =>
-                setSortBy((p) => (p === "proficiency" ? "rank" : "proficiency"))
-              }
-              className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full transition-colors"
-              style={{
-                backgroundColor: "var(--bg-hover)",
-                color: "var(--text-secondary)",
-              }}
-            >
-              {sortBy === "proficiency" ? (
-                <TrendingUp className="w-3.5 h-3.5" />
-              ) : (
-                <BarChart3 className="w-3.5 h-3.5" />
-              )}
-              {sortBy === "proficiency" ? "By Rank" : "By Proficiency"}
-            </button>
+            <div className="flex items-center gap-2 self-end sm:self-auto">
+              <button
+                onClick={() =>
+                  setSortBy((p) => (p === "proficiency" ? "rank" : "proficiency"))
+                }
+                className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border transition-all hover:scale-105"
+                style={{
+                  backgroundColor: "var(--bg-hover)",
+                  borderColor: "var(--border-color)",
+                  color: "var(--text-primary)",
+                }}
+              >
+                {sortBy === "proficiency" ? (
+                  <TrendingUp className="w-3.5 h-3.5 text-[#1db954]" />
+                ) : (
+                  <BarChart3 className="w-3.5 h-3.5 text-[#1db954]" />
+                )}
+                {sortBy === "proficiency" ? "Most Proficient" : "Default Track Order"}
+              </button>
+            </div>
           </div>
 
+          {/* Search & Genre Filters */}
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className="text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap transition-all"
+                  style={{
+                    backgroundColor:
+                      selectedCategory === cat ? "var(--accent)" : "var(--bg-hover)",
+                    color:
+                      selectedCategory === cat ? "#ffffff" : "var(--text-secondary)",
+                  }}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+            <div className="w-full md:w-64">
+              <SearchBar onSearch={setSearch} placeholder="Filter tracks..." />
+            </div>
+          </div>
+
+          {/* Spotify Song Table Container */}
           <div
-            className="rounded-lg overflow-hidden border"
+            className="rounded-xl border overflow-hidden shadow-lg"
             style={{
               backgroundColor: "var(--bg-card)",
               borderColor: "var(--border-color)",
             }}
           >
+            {/* Table Header Row */}
             <div
-              className="px-3 py-2 border-b flex items-center gap-3 text-xs font-medium"
+              className="px-4 py-3 border-b flex items-center gap-4 text-xs font-bold uppercase tracking-wider"
               style={{
                 borderColor: "var(--border-color)",
                 color: "var(--text-subtext)",
               }}
             >
-              <span className="w-6 shrink-0">#</span>
-              <span className="w-8 shrink-0" />
-              <span className="flex-1">Skill</span>
-              <span className="hidden sm:block flex-1 max-w-xs">Proficiency</span>
-              <span className="w-10 text-right">%</span>
+              <span className="w-6 text-center">#</span>
+              <span className="w-9" />
+              <span className="flex-1">Title & Genre</span>
+              <span className="hidden sm:block flex-1 max-w-xs">Mastery Level</span>
+              <span className="w-10 text-right">
+                <Clock className="w-3.5 h-3.5 inline" />
+              </span>
             </div>
 
+            {/* Table Body */}
             <div className="divide-y" style={{ borderColor: "var(--border-color)" }}>
               {filtered.length > 0 ? (
                 filtered.map((skill, i) => (
                   <SkillRow key={skill.id} skill={skill} index={i} />
                 ))
               ) : (
-                <div className="py-12 text-center">
-                  <p className="text-sm" style={{ color: "var(--text-subtext)" }}>
-                    No skills found matching &quot;{search}&quot;
+                <div className="py-16 text-center">
+                  <p className="text-sm font-medium" style={{ color: "var(--text-subtext)" }}>
+                    No technical skills found matching &quot;{search}&quot;
                   </p>
                 </div>
               )}
             </div>
           </div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="mt-4 flex items-center gap-2 text-xs"
-            style={{ color: "var(--text-subtext)" }}
-          >
-            <BarChart3 className="w-3 h-3" />
-            Showing {filtered.length} of {portfolioData.skills.length} skills
-          </motion.div>
         </div>
       </AnimatedSection>
     </section>

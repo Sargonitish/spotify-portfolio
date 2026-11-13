@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
+import { portfolioData } from "@/data/portfolio";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "John Doe | Full Stack Developer & AI Enthusiast",
-  description:
-    "Personal portfolio website showcasing projects, skills, and experience in full-stack development and AI.",
+  title: `${portfolioData.name} | ${portfolioData.role}`,
+  description: portfolioData.introduction,
   keywords: [
     "developer",
     "portfolio",
@@ -12,11 +12,11 @@ export const metadata: Metadata = {
     "react",
     "next.js",
     "typescript",
+    portfolioData.name,
   ],
   openGraph: {
-    title: "John Doe | Full Stack Developer",
-    description:
-      "Full Stack Developer & AI Enthusiast - Crafting digital experiences.",
+    title: `${portfolioData.name} | Spotify Portfolio`,
+    description: portfolioData.introduction,
     type: "website",
   },
 };
