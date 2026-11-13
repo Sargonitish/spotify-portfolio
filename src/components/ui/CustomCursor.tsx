@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export default function CustomCursor() {
+  const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isPointer, setIsPointer] = useState(false);
 
@@ -29,6 +30,7 @@ export default function CustomCursor() {
   );
 
   useEffect(() => {
+    setMounted(true);
     const handleMouseEnter = () => setVisible(true);
     const handleMouseLeave = () => setVisible(false);
 
@@ -43,7 +45,7 @@ export default function CustomCursor() {
     };
   }, [moveCursor]);
 
-  if (typeof window === "undefined") return null;
+  if (!mounted) return null;
 
   return (
     <>

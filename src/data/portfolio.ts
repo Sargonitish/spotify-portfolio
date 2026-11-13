@@ -1,7 +1,7 @@
 import type { PortfolioData } from "@/types";
 
 export const portfolioData: PortfolioData = {
-  name: "John Doe",
+  name: "Lokesh",
   role: "Full Stack Developer & AI Enthusiast",
   introduction:
     "I craft digital experiences that blend beautiful design with robust engineering. Passionate about building products that make a difference.",
