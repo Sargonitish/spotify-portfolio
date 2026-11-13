@@ -40,7 +40,7 @@ export default function HeroSection() {
     artist: name,
     album: p.category,
     duration: 180 + p.id * 15,
-    plays: (980420 - idx * 123450).toLocaleString(),
+    plays: (980420 - idx * 123450).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
     category: p.category,
     technologies: p.technologies,
     github: p.github,
@@ -283,7 +283,7 @@ export default function HeroSection() {
 
                 {/* Plays count & duration */}
                 <div className="hidden sm:flex items-center gap-8 text-xs font-mono" style={{ color: "var(--text-secondary)" }}>
-                  <span>{track.plays} streams</span>
+                  <span suppressHydrationWarning>{track.plays} streams</span>
                   <div className="flex items-center gap-1 w-12 justify-end">
                     <Clock className="w-3 h-3" />
                     <span>3:{15 + i * 12}</span>
