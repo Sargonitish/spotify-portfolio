@@ -12,7 +12,6 @@ import {
   Github,
   X,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { portfolioData } from "@/data/portfolio";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 
@@ -108,18 +107,14 @@ export default function TopBar() {
           </div>
 
           {/* Search Dropdown Results */}
-          <AnimatePresence>
-            {searchFocused && searchResults && (
-              <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 5, scale: 0.98 }}
-                className="absolute left-0 right-0 top-12 rounded-lg p-3 shadow-xl border z-50 max-h-80 overflow-y-auto"
-                style={{
-                  backgroundColor: "var(--bg-secondary)",
-                  borderColor: "var(--border-color)",
-                }}
-              >
+          {searchFocused && searchResults && (
+            <div
+              className="animate-fade-in-up absolute left-0 right-0 top-12 rounded-lg p-3 shadow-xl border z-50 max-h-80 overflow-y-auto"
+              style={{
+                backgroundColor: "var(--bg-secondary)",
+                borderColor: "var(--border-color)",
+              }}
+            >
                 {searchResults.projects.length === 0 && searchResults.skills.length === 0 ? (
                   <p className="text-xs text-center py-4" style={{ color: "var(--text-subtext)" }}>
                     No results found for &quot;{searchQuery}&quot;
@@ -174,20 +169,17 @@ export default function TopBar() {
                     )}
                   </div>
                 )}
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
         </div>
       </div>
 
       {/* Right Action Icons: Wrapped, Sound & Profile */}
       <div className="flex items-center gap-2 sm:gap-3">
         {/* Wrapped Easter Egg Button */}
-        <motion.button
+        <button
           onClick={() => setWrappedOpen(true)}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-md overflow-hidden group"
+          className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-md overflow-hidden group transition-transform hover:scale-105 active:scale-95"
           style={{
             background: "linear-gradient(135deg, #1db954, #8b5cf6)",
           }}
@@ -196,7 +188,7 @@ export default function TopBar() {
           <span className="hidden sm:inline">Portfolio Wrapped</span>
           <span className="sm:hidden">Wrapped</span>
           <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-        </motion.button>
+        </button>
 
         {/* Audio FX Mute/Unmute */}
         <button

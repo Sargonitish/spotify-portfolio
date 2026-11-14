@@ -48,7 +48,7 @@
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: "Inter", "Poppins", system-ui, sans-serif;
+  font-family: var(--font-inter), var(--font-poppins), "Inter", "Poppins", system-ui, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -67,6 +67,21 @@ body {
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0.85;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.35s ease-out forwards;
 }
 
 .animate-shimmer {
@@ -148,3 +163,39 @@ html {
     transform: rotate(360deg);
   }
 }
+
+/* GPU-composited CSS equalizer animations */
+@keyframes eq-1 {
+  0%, 100% { height: 25%; }
+  50% { height: 95%; }
+}
+@keyframes eq-2 {
+  0%, 100% { height: 85%; }
+  50% { height: 30%; }
+}
+@keyframes eq-3 {
+  0%, 100% { height: 35%; }
+  50% { height: 100%; }
+}
+@keyframes eq-4 {
+  0%, 100% { height: 90%; }
+  50% { height: 35%; }
+}
+
+.animate-eq-1 { animation: eq-1 0.75s ease-in-out infinite; }
+.animate-eq-2 { animation: eq-2 0.65s ease-in-out infinite 0.15s; }
+.animate-eq-3 { animation: eq-3 0.85s ease-in-out infinite 0.05s; }
+.animate-eq-4 { animation: eq-4 0.7s ease-in-out infinite 0.2s; }
+
+/* Deferred below-the-fold rendering per modern web guidance */
+.content-visibility-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 600px;
+}
+
+@supports not (content-visibility: auto) {
+  .content-visibility-auto {
+    contain: layout style paint;
+  }
+}
+

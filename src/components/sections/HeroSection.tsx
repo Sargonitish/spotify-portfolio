@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useMemo } from "react";
 import {
   Play,
   Pause,
@@ -34,7 +33,7 @@ export default function HeroSection() {
   };
 
   // Top 5 Popular "Tracks" (Flagship projects/skills)
-  const popularTracks = projects.slice(0, 5).map((p, idx) => ({
+  const popularTracks = useMemo(() => projects.slice(0, 5).map((p, idx) => ({
     id: `project-${p.id}`,
     title: p.title,
     artist: name,
@@ -46,7 +45,7 @@ export default function HeroSection() {
     github: p.github,
     live: p.live,
     description: p.description,
-  }));
+  })), [projects, name]);
 
   return (
     <section id="home" className="relative pb-12 overflow-hidden">
@@ -57,24 +56,19 @@ export default function HeroSection() {
           background: "linear-gradient(180deg, rgba(29,185,84,0.35) 0%, rgba(18,18,18,0.85) 75%, var(--bg-primary) 100%)",
         }}
       >
-        {/* Animated ambient glow blobs */}
+        {/* Ambient glow blobs - optimized with static blur for GPU performance */}
         <div
-          className="absolute -top-20 -left-20 w-96 h-96 rounded-full blur-3xl opacity-30 pointer-events-none animate-pulse-ring"
+          className="absolute -top-20 -left-20 w-96 h-96 rounded-full blur-2xl opacity-25 pointer-events-none"
           style={{ backgroundColor: "var(--accent)" }}
         />
         <div
-          className="absolute top-10 right-10 w-80 h-80 rounded-full blur-3xl opacity-20 pointer-events-none"
+          className="absolute top-10 right-10 w-80 h-80 rounded-full blur-2xl opacity-15 pointer-events-none"
           style={{ backgroundColor: "#8b5cf6" }}
         />
 
         <div className="relative z-10 max-w-6xl mx-auto w-full">
           {/* Verified Artist Pill */}
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="flex items-center gap-2 mb-3"
-          >
+          <div className="flex items-center gap-2 mb-3">
             <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center shadow-md">
               <Check className="w-3 h-3 text-white stroke-[3]" />
             </div>
@@ -86,14 +80,10 @@ export default function HeroSection() {
               <Flame className="w-3.5 h-3.5 text-orange-400" />
               1,420,892 Monthly Listeners
             </span>
-          </motion.div>
+          </div>
 
-          {/* Artist Name & Title */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
+          {/* Artist Name & Title - Instant paint for LCP with smooth CSS upward reveal */}
+          <div className="animate-fade-in-up">
             <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tight drop-shadow-md mb-2">
               {name}
             </h1>
@@ -103,34 +93,29 @@ export default function HeroSection() {
             <p className="text-sm sm:text-base text-white/75 max-w-2xl leading-relaxed mb-6">
               {introduction}
             </p>
-          </motion.div>
+          </div>
 
           {/* Action Row: Giant Play Button, Follow & Options */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex flex-wrap items-center gap-3 sm:gap-4"
-          >
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
             {/* Giant Green Play Button */}
-            <motion.button
+            <button
               onClick={togglePlay}
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center shadow-2xl relative group"
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center shadow-2xl relative group transition-transform hover:scale-105 active:scale-95"
               style={{ backgroundColor: "var(--accent)" }}
               aria-label={isPlaying ? "Pause Portfolio" : "Play Portfolio"}
             >
-              <div
-                className="absolute inset-0 rounded-full animate-ping opacity-40 group-hover:opacity-60"
-                style={{ backgroundColor: "var(--accent)" }}
-              />
+              {isPlaying && (
+                <div
+                  className="absolute inset-0 rounded-full animate-ping opacity-40 pointer-events-none"
+                  style={{ backgroundColor: "var(--accent)" }}
+                />
+              )}
               {isPlaying ? (
                 <Pause className="w-6 h-6 sm:w-7 sm:h-7 text-white fill-current relative z-10" />
               ) : (
                 <Play className="w-6 h-6 sm:w-7 sm:h-7 text-white fill-current ml-1 relative z-10" />
               )}
-            </motion.button>
+            </button>
 
             {/* Follow Button */}
             <button
@@ -208,7 +193,7 @@ export default function HeroSection() {
                 </div>
               )}
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 
@@ -229,10 +214,9 @@ export default function HeroSection() {
           {popularTracks.map((track, i) => {
             const isThisTrack = currentTrack.id === track.id && isPlaying;
             return (
-              <motion.div
+              <div
                 key={track.id}
-                whileHover={{ backgroundColor: "var(--bg-hover)" }}
-                className="group flex items-center justify-between px-4 py-3 cursor-pointer border-b last:border-b-0 transition-colors"
+                className="group flex items-center justify-between px-4 py-3 cursor-pointer border-b last:border-b-0 transition-colors hover:bg-[var(--bg-hover)]"
                 style={{ borderColor: "var(--border-color)" }}
                 onClick={() => playTrack(track)}
               >
@@ -289,7 +273,7 @@ export default function HeroSection() {
                     <span>3:{15 + i * 12}</span>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>

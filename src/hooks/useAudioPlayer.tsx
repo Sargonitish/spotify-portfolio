@@ -71,12 +71,11 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const [volume, setVolState] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
   const [likedTrackIds, setLikedTrackIds] = useState<(string | number)[]>([]);
-  const [visualizerLevels, setVisualizerLevels] = useState<number[]>([0.2, 0.4, 0.6, 0.3]);
+  const visualizerLevels = [0.4, 0.8, 0.5, 0.9];
   const [isWrappedOpen, setWrappedOpen] = useState(false);
   const [isLyricsOpen, setLyricsOpen] = useState(false);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const animFrameRef = useRef<number | null>(null);
 
   // Load liked tracks from localStorage on mount
   useEffect(() => {
@@ -87,23 +86,6 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       }
     } catch {}
   }, []);
-
-  // Equalizer visualizer loop
-  useEffect(() => {
-    const updateViz = () => {
-      if (isPlaying) {
-        setVisualizerLevels(audioEngine.getVisualizerData());
-      } else {
-        setVisualizerLevels([0.15, 0.1, 0.15, 0.1]);
-      }
-      animFrameRef.current = requestAnimationFrame(updateViz);
-    };
-
-    animFrameRef.current = requestAnimationFrame(updateViz);
-    return () => {
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-    };
-  }, [isPlaying]);
 
   // Track progress timer
   useEffect(() => {
@@ -187,31 +169,54 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
 
   const progress = currentTrack.duration > 0 ? (currentTime / currentTrack.duration) * 100 : 0;
 
+  const contextValue = React.useMemo(
+    () => ({
+      currentTrack,
+      isPlaying,
+      progress,
+      currentTime,
+      volume,
+      isMuted,
+      likedTrackIds,
+      visualizerLevels,
+      isWrappedOpen,
+      isLyricsOpen,
+      playTrack,
+      togglePlay,
+      nextTrack,
+      prevTrack,
+      seek,
+      setVolume,
+      toggleMute,
+      toggleLike,
+      setWrappedOpen,
+      setLyricsOpen,
+    }),
+    [
+      currentTrack,
+      isPlaying,
+      progress,
+      currentTime,
+      volume,
+      isMuted,
+      likedTrackIds,
+      isWrappedOpen,
+      isLyricsOpen,
+      playTrack,
+      togglePlay,
+      nextTrack,
+      prevTrack,
+      seek,
+      setVolume,
+      toggleMute,
+      toggleLike,
+      setWrappedOpen,
+      setLyricsOpen,
+    ]
+  );
+
   return (
-    <AudioPlayerContext.Provider
-      value={{
-        currentTrack,
-        isPlaying,
-        progress,
-        currentTime,
-        volume,
-        isMuted,
-        likedTrackIds,
-        visualizerLevels,
-        isWrappedOpen,
-        isLyricsOpen,
-        playTrack,
-        togglePlay,
-        nextTrack,
-        prevTrack,
-        seek,
-        setVolume,
-        toggleMute,
-        toggleLike,
-        setWrappedOpen,
-        setLyricsOpen,
-      }}
-    >
+    <AudioPlayerContext.Provider value={contextValue}>
       {children}
     </AudioPlayerContext.Provider>
   );

@@ -16,7 +16,6 @@ import {
   ExternalLink,
   GitBranch,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 
 export default function NowPlaying() {
@@ -123,11 +122,9 @@ export default function NowPlaying() {
               <SkipBack className="w-4 h-4 fill-current" />
             </button>
 
-            <motion.button
+            <button
               onClick={togglePlay}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white flex items-center justify-center shadow-md transition-all hover:bg-neutral-100"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white flex items-center justify-center shadow-md transition-transform hover:scale-105 active:scale-95 hover:bg-neutral-100"
               aria-label={isPlaying ? "Pause" : "Play"}
             >
               {isPlaying ? (
@@ -135,7 +132,7 @@ export default function NowPlaying() {
               ) : (
                 <Play className="w-4 h-4 text-black fill-current ml-0.5" />
               )}
-            </motion.button>
+            </button>
 
             <button
               onClick={nextTrack}
@@ -183,16 +180,18 @@ export default function NowPlaying() {
         <div className="flex items-center justify-end gap-3 w-1/4 min-w-[120px] max-w-[280px]">
           {/* Live Jumping Audio Equalizer Bars */}
           <div className="hidden lg:flex items-end gap-1 h-5 w-6 mr-1" title="Sound Output Visualizer">
-            {visualizerLevels.map((lvl, idx) => (
-              <span
-                key={idx}
-                className="w-1 rounded-t-full transition-all duration-75"
-                style={{
-                  height: `${Math.max(15, Math.min(100, lvl * 100))}%`,
-                  backgroundColor: isPlaying ? "var(--accent)" : "var(--text-subtext)",
-                }}
-              />
-            ))}
+            <span
+              className={`w-1 rounded-t-full ${isPlaying ? "animate-eq-1 bg-[#1db954]" : "h-[20%] bg-neutral-600"}`}
+            />
+            <span
+              className={`w-1 rounded-t-full ${isPlaying ? "animate-eq-2 bg-[#1db954]" : "h-[40%] bg-neutral-600"}`}
+            />
+            <span
+              className={`w-1 rounded-t-full ${isPlaying ? "animate-eq-3 bg-[#1db954]" : "h-[25%] bg-neutral-600"}`}
+            />
+            <span
+              className={`w-1 rounded-t-full ${isPlaying ? "animate-eq-4 bg-[#1db954]" : "h-[50%] bg-neutral-600"}`}
+            />
           </div>
 
           {/* Lyrics / Story Button */}
@@ -230,19 +229,14 @@ export default function NowPlaying() {
       </footer>
 
       {/* Spotify Lyrics / Code Narrative Drawer */}
-      <AnimatePresence>
-        {isLyricsOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 100 }}
-            transition={{ type: "spring", damping: 25, stiffness: 220 }}
-            className="fixed bottom-[76px] md:bottom-[90px] right-4 z-40 w-full max-w-sm rounded-2xl p-6 shadow-2xl border backdrop-blur-xl"
-            style={{
-              backgroundColor: "var(--bg-secondary)",
-              borderColor: "var(--border-color)",
-            }}
-          >
+      {isLyricsOpen && (
+        <div
+          className="animate-fade-in-up fixed bottom-[76px] md:bottom-[90px] right-4 z-40 w-full max-w-sm rounded-2xl p-6 shadow-2xl border backdrop-blur-xl"
+          style={{
+            backgroundColor: "var(--bg-secondary)",
+            borderColor: "var(--border-color)",
+          }}
+        >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <FileText className="w-4 h-4 text-[#1db954]" />
@@ -313,9 +307,8 @@ export default function NowPlaying() {
                 )}
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </>
   );
 }

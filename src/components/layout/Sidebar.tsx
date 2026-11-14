@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Home,
   User,
@@ -231,27 +230,19 @@ export default function Sidebar({ theme, toggleTheme }: SidebarProps) {
       </aside>
 
       {/* Mobile Drawer Overlay */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/75 z-40 md:hidden backdrop-blur-sm"
-              onClick={() => setMobileOpen(false)}
-            />
-            <motion.aside
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 bottom-0 w-[280px] z-50 md:hidden flex flex-col shadow-2xl"
-              style={{
-                backgroundColor: "var(--bg-secondary)",
-                borderRight: "1px solid var(--border-color)",
-              }}
-            >
+      {mobileOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/75 z-40 md:hidden backdrop-blur-sm"
+            onClick={() => setMobileOpen(false)}
+          />
+          <aside
+            className="fixed left-0 top-0 bottom-0 w-[280px] z-50 md:hidden flex flex-col shadow-2xl transition-transform duration-300 ease-out"
+            style={{
+              backgroundColor: "var(--bg-secondary)",
+              borderRight: "1px solid var(--border-color)",
+            }}
+          >
               <div className="flex items-center justify-between p-5 pb-3">
                 <div className="flex items-center gap-2">
                   <div
@@ -318,10 +309,9 @@ export default function Sidebar({ theme, toggleTheme }: SidebarProps) {
                 <span className="text-xs font-semibold text-neutral-400">Theme</span>
                 <ThemeToggle theme={theme} toggle={toggleTheme} />
               </div>
-            </motion.aside>
+            </aside>
           </>
         )}
-      </AnimatePresence>
 
       {/* Mobile Bottom Navigation Bar */}
       <nav

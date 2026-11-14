@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export default function CustomCursor() {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isPointer, setIsPointer] = useState(false);
+  const isFinePointerRef = useRef(false);
 
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
@@ -19,22 +20,28 @@ export default function CustomCursor() {
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
 
-      const target = e.target as HTMLElement;
-      setIsPointer(
-        window.getComputedStyle(target).cursor === "pointer" ||
-          target.tagName === "A" ||
-          target.tagName === "BUTTON"
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      const isInteractive = Boolean(
+        target.closest('a, button, [role="button"], input, select, textarea, label, .cursor-pointer')
       );
+      setIsPointer(isInteractive);
     },
     [cursorX, cursorY]
   );
 
   useEffect(() => {
+    // Only activate custom cursor on devices with a fine pointer (mouse/trackpad), not touchscreens
+    const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
+    isFinePointerRef.current = hasFinePointer;
+    if (!hasFinePointer) return;
+
     setMounted(true);
     const handleMouseEnter = () => setVisible(true);
     const handleMouseLeave = () => setVisible(false);
 
-    document.addEventListener("mousemove", moveCursor);
+    document.addEventListener("mousemove", moveCursor, { passive: true });
     document.addEventListener("mouseenter", handleMouseEnter);
     document.addEventListener("mouseleave", handleMouseLeave);
 

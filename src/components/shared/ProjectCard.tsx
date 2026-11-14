@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, memo } from "react";
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import { Play, Pause, ExternalLink, GitBranch, Heart, Disc, Info, X } from "lucide-react";
 import type { Project } from "@/types";
@@ -11,10 +11,11 @@ interface ProjectCardProps {
   index: number;
 }
 
-export default function ProjectCard({ project, index }: ProjectCardProps) {
+function ProjectCard({ project, index }: ProjectCardProps) {
   const { playTrack, togglePlay, currentTrack, isPlaying, likedTrackIds, toggleLike } = useAudioPlayer();
   const [modalOpen, setModalOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const rectRef = useRef<DOMRect | null>(null);
 
   const isCurrent = currentTrack.id === `project-${project.id}` && isPlaying;
   const isLiked = likedTrackIds.includes(`project-${project.id}`);
@@ -29,9 +30,15 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
 
+  const handleMouseEnter = () => {
+    if (cardRef.current) {
+      rectRef.current = cardRef.current.getBoundingClientRect();
+    }
+  };
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
+    const rect = rectRef.current || cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
     const mouseX = (e.clientX - rect.left) / rect.width - 0.5;
     const mouseY = (e.clientY - rect.top) / rect.height - 0.5;
     x.set(mouseX);
@@ -39,6 +46,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
   };
 
   const handleMouseLeave = () => {
+    rectRef.current = null;
     x.set(0);
     y.set(0);
   };
@@ -73,6 +81,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.08, duration: 0.5 }}
+        onMouseEnter={handleMouseEnter}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{
@@ -362,6 +371,8 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
     </>
   );
 }
+
+export default memo(ProjectCard);
 
 function getColor(index: number): string {
   const colors = [

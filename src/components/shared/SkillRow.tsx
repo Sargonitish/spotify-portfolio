@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Play, Pause, Heart } from "lucide-react";
 import type { Skill } from "@/types";
@@ -10,7 +11,7 @@ interface SkillRowProps {
   index: number;
 }
 
-export default function SkillRow({ skill, index }: SkillRowProps) {
+function SkillRow({ skill, index }: SkillRowProps) {
   const { playTrack, togglePlay, currentTrack, isPlaying, likedTrackIds, toggleLike } = useAudioPlayer();
 
   const isCurrent = currentTrack.id === `skill-${skill.id}` && isPlaying;
@@ -138,6 +139,8 @@ export default function SkillRow({ skill, index }: SkillRowProps) {
     </motion.div>
   );
 }
+
+export default memo(SkillRow);
 
 function getSkillColor(category: string): string {
   switch (category.toLowerCase()) {
